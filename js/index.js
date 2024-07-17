@@ -6,13 +6,12 @@ async function displayAll(){
     let contain = ``;
     for(let i = 0 ; i < data.length ; i++)
     {
-        
         let arr = Object.values(data[i])
+        let responsC = await fetch(`http://localhost:3000/customers?id=${arr[1]}`)
+        let dataC = await responsC.json()
         box = ``
         for(let x = 0 ; x  < 4 ; x++)
         {
-            let responsC = await fetch(`http://localhost:3000/customers?id=${Object.values(arr)[1]}`)
-            let dataC = await responsC.json()
             if(x !== 1)           
             {   
                     box += 
@@ -32,126 +31,169 @@ async function displayAll(){
         `<tr>${box}</tr>
         `
     }
-    document.getElementById("table").innerHTML = contain;
+    document.getElementById("table").innerHTML += contain;
 }
 displayAll()
 
+$("#Sid").on("click" , function(){
+    getByID($("#ID").val())
+})
+$("#Sname").on("click" , function(){
+    getByName($("#name").val())
+})
 
-$("#ID").on("keyup" , async function(){
-   
+
+async function getByID(id){
+    changeData(chart , [] , id , [])
     let contain = ``;
-    let responsC = await fetch(`http://localhost:3000/transactions?customer_id=${this.value}`)
+    let responsC = await fetch(`http://localhost:3000/transactions?customer_id=${id}`)
     let dataC = await responsC.json()
+    let respons = await fetch(`http://localhost:3000/customers?id=${id}`)
+    let data = await respons.json()
+    garph(dataC[0]["customer_id"] , data[0]['name'])
+    
     for(let i = 0 ; i < dataC.length ; i++)
     {
-        if(this.value != dataC[i]['customer_id'])
+        if(id != dataC[i]['customer_id'])
         {
             displayAll()
             break;
         }
         else
-        {
+        {    
             
-        let respons = await fetch(`http://localhost:3000/customers?id=${dataC[i]["customer_id"]}`)
-        let data = await respons.json()
-        let arr = Object.values(dataC[i])
-        box = ``
-        for(let x = 0 ; x  < 4 ; x++)
-        {
-            
-            if(x !== 1)           
-            {   
-                    box += 
-                    `
-                        <td>${arr[x]}</td>   
-                    `
-            }
-            else
+            let arr = Object.values(dataC[i])
+            box = ``
+            for(let x = 0 ; x  < 4 ; x++)
             {
-                box += 
-                    `
-                        <td>${data['0']['name']}</td>   
-                    `
-            }
-        }
-        contain +=
-        `<tr>${box}</tr>
-        `
-    }
-    document.getElementById("table").innerHTML = contain;
-        }
-})
-
-
-$("#name").on("keyup" , async function(){
-   
-    let contain = ``;
-    let responsC = await fetch(`http://localhost:3000/customers?name=${this.value}`)
-    let dataC = await responsC.json()
-    for(let i = 0 ; i < dataC.length ; i++)
-    {
-        let respons = await fetch(`http://localhost:3000/transactions?customer_id=${dataC[i]['id']}`)
-        let data = await respons.json();
-        let arr = Object.values(data[i])
-        box = ``
-        for(let x = 0 ; x  < 4 ; x++)
-        {
-            
-            if(x !== 1)           
-            {   
+                
+                if(x !== 1)           
+                {   
+                        box += 
+                        `
+                            <td>${arr[x]}</td>   
+                        `
+                }
+                else
+                {
                     box += 
-                    `
-                        <td>${arr[x]}</td>   
-                    `
+                        `
+                            <td>${data['0']['name']}</td>   
+                        `
+                }
             }
-            else
-            {
-                box += 
-                    `
-                        <td>${dataC['0']['name']}</td>   
-                    `
-            }
+            contain +=
+            `<tr>${box}</tr>
+            `
         }
-        contain +=
-        `<tr>${box}</tr>
-        `
     }
-    document.getElementById("table").innerHTML = contain;
-    }
-)
-
-
-let dat
-async function garph(){
-    let respons = await fetch("http://localhost:3000/transactions")
-    dat = await respons.json()
-    creatChart(dat)
+    
+    document.getElementById("table").innerHTML = 
+    `
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Amount</th>
+        </tr>
+    `
+    document.getElementById("table").innerHTML += contain;
+    
 }
-garph()
+
+async function getByName(name){
+    changeData(chart , [] , name , [])
+    let contain = ``;
+    try {
+        let responsC = await fetch(`http://localhost:3000/customers?name=${name}`)
+        let dataC = await responsC.json()
+        garph(dataC[0]["id"], dataC[0]["name"])
+        let respons = await fetch(`http://localhost:3000/transactions?customer_id=${dataC[0]['id']}`)
+        let data = await respons.json();
+        
+        if(name != '')
+        {
+            for(let i = 0 ; i < data.length ; i++)
+            {
+                
+                let arr = Object.values(data[i])
+                box = ``
+                for(let x = 0 ; x  < 4 ; x++)
+                {
+                    
+                    if(x !== 1)           
+                    {   
+                            box += 
+                            `
+                                <td>${arr[x]}</td>   
+                            `
+                    }
+                    else
+                    {
+                        box += 
+                            `
+                                <td>${dataC['0']['name']}</td>   
+                            `
+                    }
+                }
+                contain +=
+                `<tr>${box}</tr>
+                `
+            } 
+        }
+        else
+            displayAll()
+            
+    } catch (error) {
+        displayAll()
+    }
+    document.getElementById("table").innerHTML = 
+    `
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Amount</th>
+        </tr>
+    `
+    document.getElementById("table").innerHTML += contain;
+
+}
 
 
+let data , chart
+async function garph(id , name){
+    let respons = await fetch(`http://localhost:3000/transactions?customer_id=${id}`)
+    data = await respons.json()
+    changeData(chart , data.map(row => row.date) , name , data.map(row => row.amount))
+}
 
+function changeData(chart, labels, label ,newData) {
+    chart.data.labels = labels;
+    chart.data.datasets[0].label = label;
+    chart.data.datasets[0].data = newData;
+    chart.update();
+}
 
+(()=>{
 const ctx = document.getElementById('myChart');
-function creatChart(date){
-  new Chart(ctx, {
+
+chart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: date.map(row => row.date),
-      datasets: [{
+    labels: [],
+    datasets: [{
         label: '# of Votes',
-        data: date.map(row => row.amount),
+        data: [],
         borderWidth: 1
-      }]
+    }]
     },
     options: {
-      scales: {
+    scales: {
         y: {
-          beginAtZero: true
+        beginAtZero: true
         }
-      }
+    }
     }
   });
-}
-
-
+})()
