@@ -48,10 +48,9 @@ async function getByAmount(amount){
     let contain = ``;
     let responsC = await fetch(`http://localhost:3000/transactions?amount=${amount}`)
     let dataC = await responsC.json()
-    // console.log(dataC[0]['customer_id'])
     let respons = await fetch(`http://localhost:3000/customers?id=${dataC[0]['customer_id']}`)
     let data = await respons.json()
-    console.log(data[0]['name'])
+    garph(dataC[0]["customer_id"] , data[0]['name'])
     
     
     for(let i = 0 ; i < dataC.length ; i++)
@@ -84,7 +83,6 @@ async function getByAmount(amount){
                             <td>${data['0']['name']}</td>   
                         `
                 }
-                garph(dataC[0]["customer_id"] , data[0]['name'])
             }
             contain =
             `<tr>${box}</tr>
