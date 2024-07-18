@@ -16,13 +16,13 @@
       <div class="container">
         <div id="row" class="row py-5">
           <div class="col-12 col-md-6 row">
-            <div class="col-9">
+            <div class="col-8">
               <div class="inputSearch">
-                <input id="ID" type="text" class="w-100 px-2 py-1 rounded-1" placeholder="Search By ID">
+                <input id="ID" type="text" class="w-100 px-2 py-1 rounded-1" placeholder="Search By Amount">
               </div>
             </div>
-            <div class="col-3">
-              <button id="Sid" class="ms-1 btn btn-danger">Search ID</button>
+            <div class="col-4">
+              <button id="Sid" class="ms-1 btn btn-danger">Search Amount</button>
             </div>
           </div>
           <div class="col-12 col-md-6 row">
@@ -35,12 +35,7 @@
               <button id="Sname" class="ms-1 btn btn-danger">Search Name</button>
             </div>
           </div>
-          <div class="chart bg-white my-4">
-            <div>
-              <canvas id="myChart"></canvas>
-            </div>
-          </div>
-          <div class="table ">
+          <div class="table my-4">
            <table id="table" class="w-100 text-center">
                 <tr>
                     <th>ID</th>
@@ -53,7 +48,11 @@
         </div>
       </div>
     </section>
-
+    <div class="chart bg-white mb-3">
+      <div>
+        <canvas id="myChart"></canvas>
+      </div>
+    </div>
     
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

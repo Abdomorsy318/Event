@@ -36,25 +36,28 @@ async function displayAll(){
 displayAll()
 
 $("#Sid").on("click" , function(){
-    getByID($("#ID").val())
+    getByAmount($("#ID").val())
 })
 $("#Sname").on("click" , function(){
     getByName($("#name").val())
 })
 
 
-async function getByID(id){
-    changeData(chart , [] , id , [])
+async function getByAmount(amount){
+    changeData(chart , [] , amount , [])
     let contain = ``;
-    let responsC = await fetch(`http://localhost:3000/transactions?customer_id=${id}`)
+    let responsC = await fetch(`http://localhost:3000/transactions?amount=${amount}`)
     let dataC = await responsC.json()
-    let respons = await fetch(`http://localhost:3000/customers?id=${id}`)
+    // console.log(dataC[0]['customer_id'])
+    let respons = await fetch(`http://localhost:3000/customers?id=${dataC[0]['customer_id']}`)
     let data = await respons.json()
-    garph(dataC[0]["customer_id"] , data[0]['name'])
+    console.log(data[0]['name'])
+    
     
     for(let i = 0 ; i < dataC.length ; i++)
     {
-        if(id != dataC[i]['customer_id'])
+        
+        if(amount != dataC[i]['amount'])
         {
             displayAll()
             break;
@@ -81,8 +84,9 @@ async function getByID(id){
                             <td>${data['0']['name']}</td>   
                         `
                 }
+                garph(dataC[0]["customer_id"] , data[0]['name'])
             }
-            contain +=
+            contain =
             `<tr>${box}</tr>
             `
         }
