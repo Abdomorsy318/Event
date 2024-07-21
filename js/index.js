@@ -44,15 +44,10 @@ $("#Sname").on("click" , function(){
 
 
 async function getByAmount(amount){
-    changeData(chart , [] , amount , [])
     let contain = ``;
     let responsC = await fetch(`http://localhost:3000/transactions?amount=${amount}`)
     let dataC = await responsC.json()
-    let respons = await fetch(`http://localhost:3000/customers?id=${dataC[0]['customer_id']}`)
-    let data = await respons.json()
-    garph(dataC[0]["customer_id"] , data[0]['name'])
-    
-    
+        
     for(let i = 0 ; i < dataC.length ; i++)
     {
         
@@ -63,8 +58,10 @@ async function getByAmount(amount){
         }
         else
         {    
-            
+            let respons = await fetch(`http://localhost:3000/customers?id=${dataC[i]['customer_id']}`)
+            let data = await respons.json()
             let arr = Object.values(dataC[i])
+            console.log(arr)
             box = ``
             for(let x = 0 ; x  < 4 ; x++)
             {
@@ -84,7 +81,7 @@ async function getByAmount(amount){
                         `
                 }
             }
-            contain =
+            contain +=
             `<tr>${box}</tr>
             `
         }
